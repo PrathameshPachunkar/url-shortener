@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/src/prisma/db';
+import { connectDatabase, db } from '@/src/prisma/db';
 
 export async function GET(
   _request: Request,
@@ -7,6 +7,7 @@ export async function GET(
 ) {
   const { shortcode } = await params;
 
+  await connectDatabase();
   const url = await db.orm.public.Url.first({ shortCode: shortcode });
 
   if (!url) {

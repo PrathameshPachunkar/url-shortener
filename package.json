@@ -20,7 +20,7 @@
     "migration:status": "prisma migration status",
     "skills:sync": "prisma skills sync || exit 0",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint app/page.tsx app/urlForm.tsx app/api/shorten/route.ts app/api/postURL.ts app/[shortcode]/route.ts src/prisma/db.ts lib/shortcode.ts --no-cache",
     "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {

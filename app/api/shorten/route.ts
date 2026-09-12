@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/src/prisma/db';
+import { connectDatabase, db } from '@/src/prisma/db';
 import { generateShortCode } from '@/lib/shortcode';
 
 const MAX_RETRIES = 5;
@@ -36,6 +36,7 @@ export async function POST(request: Request) {
     const shortCode = generateShortCode();
 
     try {
+      await connectDatabase();
       const created = await db.orm.public.Url.create({
         shortCode,
         originalUrl: url.toString(),

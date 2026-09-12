@@ -5,15 +5,36 @@ import { FormEvent, useState } from "react";
 export default function UrlShortener() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    setIsSubmitting(true);
 
-    // TODO: Send URL to your API
-    console.log("URL:", url);
+    try {
+      const response = await fetch("/api/shorten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const result: { shortUrl?: string; error?: string } = await response.json();
 
-    // Temporary result for UI testing
-    setShortUrl("https://short.ly/abc123");
+      if (!response.ok || !result.shortUrl) {
+        throw new Error(result.error ?? "Unable to shorten this URL.");
+      }
+
+      setShortUrl(result.shortUrl);
+    } catch (submissionError) {
+      setError(
+        submissionError instanceof Error
+          ? submissionError.message
+          : "Unable to shorten this URL.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -44,11 +65,14 @@ export default function UrlShortener() {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="rounded-xl bg-white px-5 py-3 text-sm font-medium text-zinc-950 transition hover:bg-zinc-200 active:scale-[0.98]"
           >
-            Shorten
+            {isSubmitting ? "Saving..." : "Shorten"}
           </button>
         </form>
+
+        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
 
         {shortUrl && (
           <div className="mt-4 flex items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">

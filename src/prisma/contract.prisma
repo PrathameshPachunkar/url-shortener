@@ -1,0 +1,8 @@
+// use prisma-next
+
+model Url {
+  id          Int      @id @default(autoincrement())
+  originalUrl String
+  shortCode   String   @unique
+  createdAt   DateTime @default(now())
+}

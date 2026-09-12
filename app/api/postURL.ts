@@ -8,7 +8,13 @@ export default async function handler(req: NextRequest) {
         return NextResponse.json({ message: 'Data received successfully', data });
     }
     catch (error) {
-        return NextResponse.json({ message: 'Error processing data', error: erro.message }, { status: 400 });
+        return NextResponse.json(
+          {
+            message: 'Error processing data',
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
+          { status: 400 },
+        );
     }
 
     } else {
